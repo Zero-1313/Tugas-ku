@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard Tugas</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" />
+  <style>
+    /* (CSS tetap, tidak berubah) */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #1e1b2e;
+      color: #f3f3f3;
+      overflow-x: hidden;
+    }
+    header {
+      background-color: #3f3cbb;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+    .menu-toggle {
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -230px;
+      width: 230px;
+      height: 100%;
+      background-color: #2d2a4a;
+      padding-top: 60px;
+      transition: 0.3s;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+    .sidebar.active {
+      left: 0;
+    }
+    .sidebar a {
+      display: block;
+      padding: 15px 25px;
+      color: #f3f3f3;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+    .sidebar a:hover {
+      background-color: #3f3cbb;
+    }
+    .container {
+      padding: 25px;
+      transition: margin-left 0.3s;
+    }
+    .container.sidebar-active {
+      margin-left: 230px;
+    }
+    .upload-box {
+      background-color: #2f2c4a;
+      border-radius: 10px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .upload-box h2 {
+      margin-bottom: 20px;
+    }
+    .upload-box input[type="file"] {
+      display: none;
+    }
+    .upload-box label {
+      background-color: #3f3cbb;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-block;
+    }
+    #fileName {
+      margin-top: 15px;
+      font-weight: bold;
+      display: block;
+    }
+    button.submit-btn {
+      margin-top: 20px;
+      background-color: #7c3aed;
+      color: white;
+      border: none;
+      padding: 10px 25px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #progressContainer {
+      margin-top: 15px;
+      background: #444;
+      border-radius: 6px;
+      height: 10px;
+      overflow: hidden;
+    }
+    #progressBar {
+      height: 100%;
+      width: 0%;
+      background: #10b981;
+      transition: width 0.3s;
+    }
+    .task-list h2 {
+      margin-bottom: 15px;
+    }
+    .task-item {
+      background-color: #2d2a4a;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+    .task-item a {
+      color: #8be9fd;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
+    <div>Dashboard Tugas</div>
+  </header>
+
+  <div class="sidebar" id="sidebar">
+    <a href="#">Dashboard</a>
+    <a href="#">Upload Tugas</a>
+    <a href="#">Riwayat Tugas</a>
+    <a href="#" onclick="logout()">Logout</a>
+  </div>
+
+  <div class="container" id="mainContainer">
+    <div class="upload-box">
+      <h2>Upload Tugas</h2>
+      <form id="uploadForm">
+        <label for="fileUpload">Pilih File</label>
+        <input type="file" id="fileUpload" required>
+        <span id="fileName">Belum ada file dipilih</span>
+        <div id="progressContainer">
+          <div id="progressBar"></div>
+        </div>
+        <button type="submit" class="submit-btn">Kumpulkan</button>
+      </form>
+    </div>
+
+    <div class="task-list">
+      <h2>Riwayat Tugas</h2>
+      <div id="taskContainer">
+        <div class="task-item">Memuat data tugas...</div>
+      </div>
+    </div>
+  </div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+<script>
+  // Konfigurasi Firebase kamu
+  const firebaseConfig = {
+  apiKey: "AIzaSyDCGO4FfddCl_idL7bO14oppZQEFf8KnWo",
+  authDomain: "kumpul-tugas-a4811.firebaseapp.com",
+  databaseURL: "https://kumpul-tugas-a4811-default-rtdb.firebaseio.com/",
+  projectId: "kumpul-tugas-a4811",
+  storageBucket: "kumpul-tugas-a4811.firebasestorage.app",
+  messagingSenderId: "126511843484",
+  appId: "1:126511843484:web:8540be3ca118d0620a8559",
+  measurementId: "G-LGZ0DQK5YD"
+};
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+</script>
+
+<script>
+  function logout() {
+    alert("Logout berhasil.");
+    window.location.href = "login.html";
+  }
+
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const container = document.getElementById('mainContainer');
+    sidebar.classList.toggle('active');
+    container.classList.toggle('sidebar-active');
+  }
+
+  const fileUpload = document.getElementById("fileUpload");
+  const fileName = document.getElementById("fileName");
+  const progressBar = document.getElementById("progressBar");
+  const uploadForm = document.getElementById("uploadForm");
+  const taskContainer = document.getElementById("taskContainer");
+
+  // Nama user simulasi
+  const namaUser = "Siswa";
+
+  // Saat file dipilih
+  fileUpload.addEventListener("change", (e) => {
+    fileName.innerText = e.target.files[0]?.name || "Belum ada file dipilih";
+  });
+
+  // Submit form
+  uploadForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const file = fileUpload.files[0];
+    if (!file) {
+      alert("Pilih file terlebih dahulu.");
+      return;
+    }
+
+    progressBar.style.width = "80%";
+
+    const dataTugas = {
+      nama: namaUser,
+      file: file.name,
+      waktu: new Date().toLocaleString()
+    };
+
+    db.ref("tugas").push(dataTugas)
+      .then(() => {
+        alert("Tugas berhasil dikumpulkan!");
+        progressBar.style.width = "100%";
+        fileUpload.value = "";
+        fileName.innerText = "Belum ada file dipilih";
+        setTimeout(() => progressBar.style.width = "0%", 800);
+      })
+      .catch((err) => {
+        alert("Gagal upload: " + err.message);
+        progressBar.style.width = "0%";
+      });
+  });
+
+  // Ambil data tugas dan tampilkan
+  function tampilkanTugas() {
+    db.ref("tugas").on("value", (snapshot) => {
+      taskContainer.innerHTML = "";
+      const data = snapshot.val();
+      if (data) {
+        Object.values(data).reverse().forEach((item) => {
+          const div = document.createElement("div");
+          div.className = "task-item";
+          div.innerHTML = `<strong>${item.nama}</strong> mengumpulkan <em>${item.file}</em> pada ${item.waktu}`;
+          taskContainer.appendChild(div);
+        });
+      } else {
+        taskContainer.innerHTML = "<div class='task-item'>Belum ada tugas dikumpulkan.</div>";
+      }
+    });
+  }
+
+  tampilkanTugas();
+</script>
+</body>
+</html>

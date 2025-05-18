@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pilih Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #3f3cbb, #1e1b2e);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .login-selection {
+      background-color: #2f2c4a;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    .login-selection h1 {
+      margin-bottom: 25px;
+    }
+
+    .login-selection button {
+      width: 200px;
+      padding: 12px;
+      margin: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #7c3aed;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .login-selection button:hover {
+      background-color: #6a28e7;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-selection">
+    <h1>Login Sebagai</h1>
+    <button onclick="window.location.href='login.html'">Murid</button><br>
+    <button onclick="window.location.href='guru.html'">Guru</button>
+  </div>
+
+</body>
+</html>
